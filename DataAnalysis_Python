@@ -1,0 +1,39 @@
+//Importing the neccessary python libraries and the dataset
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv("uber-raw-data-sep14.csv")
+data
+data["Date/Time"] = data["Date/Time"].map(pd.to_datetime)
+data
+
+
+//Prepare the data according to days and hours
+data["day"] = data["Date/Time"].apply(lambda x:x.day)
+data["weekdays"] = data["Date/Time"].apply(lambda x:x.weekday())
+data["hour"] = data["Date/Time"].apply(lambda x:x.hour)
+data
+
+
+//Look at each day to see on which day the uber trips were highest
+sns.set(rc = {'figure.figsize':(15,13)})
+sns.distplot(data["day"])
+
+
+//Analyse the uber trips according to the hours
+sns.distplot(data["hour"])
+
+//Analyse the uber trips according to the weekdays
+sns.distplot(data["weekdays"])
+
+
+//Look at the correlation of hours and weekdays
+df=data.groupby(["weekdays","hour"]).apply(lambda x: len(x))
+df = df.unstack()
+sns.heatmap(df,annot=False)
+
+
+
+//Plot the density of uber trips according to the regions of the New Your City
+data.plot(kind='scatter',x='Lon',y="Lat",s=data['day'],label='Uber Trips', figsize=(12,10))
